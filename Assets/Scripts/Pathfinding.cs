@@ -113,7 +113,7 @@ public class Pathfinding
             neighbourList.Add(GetNode(currentNode.X,currentNode.Y - 1));
         }
             //UP
-        if (currentNode.Y + 1 >= 0)
+        if (currentNode.Y + 1 < _gridMap.GetHeight())
         {
             neighbourList.Add(GetNode(currentNode.X,currentNode.Y + 1));
         }
