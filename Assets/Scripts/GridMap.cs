@@ -1,37 +1,51 @@
+using System;
 using UnityEngine;
-public class GridMap
+public class GridMap<TGridObject>
 {
-    private int width, height;
-    private float cellSize;
-    private int[,] gridArray;
-    private TextMesh[,] debugTextArray;
-    private Vector3 originPosition;
+    private bool _showDebug = true;
 
-    public GridMap(int width, int height, float cellSize, Vector3 originPosition)
+    private int _width, _height;
+    private float _cellSize;
+    private TGridObject[,] _gridArray;
+    private TextMesh[,] _debugTextArray;
+    private Vector3 _originPosition;
+
+    public GridMap(int width, int height, float cellSize, Vector3 originPosition, 
+        Func<GridMap<TGridObject>, int, int, TGridObject> gridObject)
     {
-        this.width = width;
-        this.height = height;
-        this.cellSize = cellSize;
-        this.originPosition = originPosition;
+        _width = width;
+        _height = height;
+        _cellSize = cellSize;
+        _originPosition = originPosition;
         
-        gridArray = new int[width, height];
-        debugTextArray = new TextMesh[width, height];
-        
-        Debug.Log(width + " " + height);
-
-        for (int x = 0; x < gridArray.GetLength(0); x++)
+        _gridArray = new TGridObject[width, height];
+        for (int x = 0; x < _gridArray.GetLength(0); x++)
         {
-            for (int y = 0; y < gridArray.GetLength(1); y++)
+            for (int y = 0; y < _gridArray.GetLength(1); y++)
             {
-                debugTextArray[x,y] = CreateText(gridArray[x,y].ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
-                Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x,y+1), Color.white, 100f);
+                _gridArray[x, y] = gridObject(this, x, y);
             }
         }
-        Debug.DrawLine(GetWorldPosition(0,height), GetWorldPosition(width,height), Color.white, 100f);
-        Debug.DrawLine(GetWorldPosition(width,0), GetWorldPosition(width,height), Color.white, 100f);
-        
-        SetValue(2,1, 37);
+
+
+        if (_showDebug)
+        {
+            _debugTextArray = new TextMesh[width, height];
+            
+            Debug.Log(width + " " + height);
+            
+            for (int x = 0; x < _gridArray.GetLength(0); x++)
+            {
+                for (int y = 0; y < _gridArray.GetLength(1); y++)
+                {
+                    _debugTextArray[x,y] = CreateText(_gridArray[x,y]?.ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
+                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+                    Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x,y+1), Color.white, 100f);
+                }
+            }
+            Debug.DrawLine(GetWorldPosition(0,height), GetWorldPosition(width,height), Color.white, 100f);
+            Debug.DrawLine(GetWorldPosition(width,0), GetWorldPosition(width,height), Color.white, 100f);
+        }
     }
 
     private static TextMesh CreateText(string text, Vector3 localPosition = default(Vector3),
@@ -56,40 +70,40 @@ public class GridMap
 
     private Vector3 GetWorldPosition(int x, int y)
     {
-        return new Vector3(x, y) * cellSize + originPosition;
+        return new Vector3(x, y) * _cellSize + _originPosition;
     }
 
     private void GetXY(Vector3 worldPosition, out int x, out int y)
     {
-        x = Mathf.FloorToInt((worldPosition-originPosition).x / cellSize);
-        y = Mathf.FloorToInt((worldPosition-originPosition).y / cellSize);
+        x = Mathf.FloorToInt((worldPosition-_originPosition).x / _cellSize);
+        y = Mathf.FloorToInt((worldPosition-_originPosition).y / _cellSize);
     }
 
-    public void SetValue(int x, int y, int value)
+    public void SetGridObject(int x, int y, TGridObject gridObject)
     {
-        if (x < 0 || y < 0 || x >= width || y >= height) return;
-        gridArray[x, y] = value;
-        debugTextArray[x, y].text = gridArray[x, y].ToString();
+        if (x < 0 || y < 0 || x >= _width || y >= _height) return;
+        _gridArray[x, y] = gridObject;
+        _debugTextArray[x, y].text = _gridArray[x, y]?.ToString();
     }
 
-    public void SetValue(Vector3 worldPosition, int value)
+    public void SetGridObject(Vector3 worldPosition, TGridObject gridObject)
     {
         int x, y;
         GetXY(worldPosition, out x, out y);
-        SetValue(x,y,value);
+        SetGridObject(x,y,gridObject);
     }
 
-    public int GetValue(int x, int y)
+    public TGridObject GetGridObject(int x, int y)
     {
-        if (x < 0 || y < 0 || x >= width || y >= height) return -1;
-        return gridArray[x, y];
+        if (x < 0 || y < 0 || x >= _width || y >= _height) return default(TGridObject);
+        return _gridArray[x, y];
     }
     
-    public int GetValue(Vector3 worldPosition)
+    public TGridObject GetGridObject(Vector3 worldPosition)
     {
         int x, y;
         GetXY(worldPosition, out x, out y);
-        return GetValue(x,y);
+        return GetGridObject(x,y);
     }
 
     public static Vector3 GetMousePosition()
@@ -97,5 +111,14 @@ public class GridMap
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         return mousePosition;
 
+    }
+
+    public int GetWidth()
+    {
+        return _width;
+    }
+    public int GetHeight()
+    {
+        return _height;
     }
 }
