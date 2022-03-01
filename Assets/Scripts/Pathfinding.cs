@@ -1,20 +1,18 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
-public class Pathfinding
+public sealed class Pathfinding
 {
     private const int MoveStraightCost = 10;
     private const int MoveDiagonalCost = 14;
     
-    private GridMap<PathNode> _gridMap;
+    private readonly GridMap<PathNode> _gridMap;
     private List<PathNode> _openList;
     private List<PathNode> _closedList;
     public Pathfinding(int width, int height, float cellSize, Vector3 originPosition)
     {
         _gridMap = new GridMap<PathNode>(width, height, cellSize, originPosition,
-            (g, x, y) => new PathNode(g, x, y));
+            (g, x, y) => new PathNode(x, y));
     }
 
     public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
@@ -131,10 +129,10 @@ public class Pathfinding
     {
         return _gridMap.GetGridObject(x, y);
     }
+
     private List<PathNode> CalculatePath(PathNode endNode)
     {
-        List<PathNode> path = new List<PathNode>();
-        path.Add(endNode);
+        List<PathNode> path = new List<PathNode> {endNode};
         PathNode currentNode = endNode;
         while (currentNode.CameFromNode != null)
         {
@@ -154,7 +152,7 @@ public class Pathfinding
         return MoveDiagonalCost * Mathf.Min(xDistance, yDistance) + MoveStraightCost * remaining;
     }
 
-    private PathNode GetLowestFCostNode(IReadOnlyList<PathNode> pathNodes)
+    private static PathNode GetLowestFCostNode(IReadOnlyList<PathNode> pathNodes)
     {
         PathNode lowestFCostNode = pathNodes[0];
         for(int i = 1; i < pathNodes.Count; i++)

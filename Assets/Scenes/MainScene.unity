@@ -167,6 +167,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgPrefab: {fileID: 155575617156921186, guid: e9a2adf2958168d4089b86c7a23f2bf2, type: 3}
+  startColor: {r: 0, g: 0.6792453, b: 0, a: 1}
+  endColor: {r: 0.764151, g: 0, b: 0, a: 1}
+  pathColor: {r: 0, g: 0, b: 0.754717, a: 1}
+  wallColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +207,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.21698111, g: 0.21698111, b: 0.21698111, a: 0}
+  m_BackGroundColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -475,9 +479,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originPosition: {fileID: 1206375430}
   pathfindingVisual: {fileID: 33651991}
-  width: 10
-  height: 10
-  cellSize: 7.3
+  width: 20
+  height: 11
+  cellSize: 7
 --- !u!4 &1341933985
 Transform:
   m_ObjectHideFlags: 0

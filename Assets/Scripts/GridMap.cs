@@ -2,13 +2,14 @@ using System;
 using UnityEngine;
 public class GridMap<TGridObject>
 {
-    private bool _showDebug = false;
+    private readonly bool _showDebug = false;
 
-    private int _width, _height;
-    private float _cellSize;
-    private TGridObject[,] _gridArray;
-    private TextMesh[,] _debugTextArray;
-    private Vector3 _originPosition;
+    private readonly int _width;
+    private readonly int _height;
+    private readonly float _cellSize;
+    private readonly TGridObject[,] _gridArray;
+    private readonly TextMesh[,] _debugTextArray;
+    private readonly Vector3 _originPosition;
 
     public GridMap(int width, int height, float cellSize, Vector3 originPosition, 
         Func<GridMap<TGridObject>, int, int, TGridObject> gridObject)
@@ -35,18 +36,18 @@ public class GridMap<TGridObject>
             for (int x = 0; x < _gridArray.GetLength(0); x++)
             {
                 for (int y = 0; y < _gridArray.GetLength(1); y++)
-                {
-                    //_debugTextArray[x,y] = CreateText(_gridArray[x,y]?.ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
-                    Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x,y+1), Color.white, 100f);
+                { 
+                    _debugTextArray[x,y] = CreateText(_gridArray[x,y]?.ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
+                    //Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+                    //Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x,y+1), Color.white, 100f);
                 }
             }
-            Debug.DrawLine(GetWorldPosition(0,height), GetWorldPosition(width,height), Color.white, 100f);
-            Debug.DrawLine(GetWorldPosition(width,0), GetWorldPosition(width,height), Color.white, 100f);
+            //Debug.DrawLine(GetWorldPosition(0,height), GetWorldPosition(width,height), Color.white, 100f);
+            //Debug.DrawLine(GetWorldPosition(width,0), GetWorldPosition(width,height), Color.white, 100f);
         }
     }
 
-    private static TextMesh CreateText(string text, Vector3 localPosition = default(Vector3),
+    public static TextMesh CreateText(string text, Vector3 localPosition = default(Vector3),
         int fontSize = 20, Color? color = null, TextAlignment textAlignment = TextAlignment.Left,
         TextAnchor textAnchor = TextAnchor.MiddleCenter)
     {
@@ -77,7 +78,7 @@ public class GridMap<TGridObject>
         y = Mathf.FloorToInt((worldPosition-_originPosition).y / _cellSize);
     }
 
-    public void SetGridObject(int x, int y, TGridObject gridObject)
+    private void SetGridObject(int x, int y, TGridObject gridObject)
     {
         if (x < 0 || y < 0 || x >= _width || y >= _height) return;
         _gridArray[x, y] = gridObject;
@@ -86,8 +87,7 @@ public class GridMap<TGridObject>
 
     public void SetGridObject(Vector3 worldPosition, TGridObject gridObject)
     {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
+        GetXY(worldPosition, out int x, out int y);
         SetGridObject(x,y,gridObject);
     }
 
@@ -99,16 +99,18 @@ public class GridMap<TGridObject>
     
     public TGridObject GetGridObject(Vector3 worldPosition)
     {
-        int x, y;
-        GetXY(worldPosition, out x, out y);
+        GetXY(worldPosition, out int x, out int y);
         return GetGridObject(x,y);
     }
 
     public static Vector3 GetMousePosition()
     {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        return mousePosition;
-
+        if (Camera.main is { })
+        {
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            return mousePosition;
+        }
+        return Vector3.zero;
     }
 
     public int GetWidth()

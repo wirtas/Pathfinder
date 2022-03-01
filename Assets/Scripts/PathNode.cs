@@ -1,7 +1,5 @@
 public class PathNode
 {
-    private GridMap<PathNode> _gridMap;
-
     public int X { get; }
 
     public int Y { get; }
@@ -10,12 +8,11 @@ public class PathNode
     // G - Start -> Current
     // H - Current -> End
     // F = G+H
-    public bool IsWalkable { get; set; }
+    public bool IsWalkable { get; private set; }
     public PathNode CameFromNode;
     
-    public PathNode(GridMap<PathNode> gridMap, int x, int y)
+    public PathNode(int x, int y)
     {
-        _gridMap = gridMap;
         X = x;
         Y = y;
         IsWalkable = true;
