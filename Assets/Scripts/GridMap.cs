@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 public class GridMap<TGridObject>
 {
-    private bool _showDebug = true;
+    private bool _showDebug = false;
 
     private int _width, _height;
     private float _cellSize;
@@ -31,14 +31,12 @@ public class GridMap<TGridObject>
         if (_showDebug)
         {
             _debugTextArray = new TextMesh[width, height];
-            
-            Debug.Log(width + " " + height);
-            
+
             for (int x = 0; x < _gridArray.GetLength(0); x++)
             {
                 for (int y = 0; y < _gridArray.GetLength(1); y++)
                 {
-                    _debugTextArray[x,y] = CreateText(_gridArray[x,y]?.ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
+                    //_debugTextArray[x,y] = CreateText(_gridArray[x,y]?.ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
                     Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x,y+1), Color.white, 100f);
                 }
@@ -68,7 +66,7 @@ public class GridMap<TGridObject>
         return textMesh;
     }
 
-    private Vector3 GetWorldPosition(int x, int y)
+    public Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(x, y) * _cellSize + _originPosition;
     }
@@ -120,5 +118,10 @@ public class GridMap<TGridObject>
     public int GetHeight()
     {
         return _height;
+    }
+
+    public float GetSize()
+    {
+        return _cellSize;
     }
 }
