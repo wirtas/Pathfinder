@@ -2,13 +2,10 @@ using System;
 using UnityEngine;
 public class GridMap<TGridObject>
 {
-    private readonly bool _showDebug = false;
-
     private readonly int _width;
     private readonly int _height;
     private readonly float _cellSize;
     private readonly TGridObject[,] _gridArray;
-    private readonly TextMesh[,] _debugTextArray;
     private readonly Vector3 _originPosition;
 
     public GridMap(int width, int height, float cellSize, Vector3 originPosition, 
@@ -26,24 +23,6 @@ public class GridMap<TGridObject>
             {
                 _gridArray[x, y] = gridObject(this, x, y);
             }
-        }
-
-
-        if (_showDebug)
-        {
-            _debugTextArray = new TextMesh[width, height];
-
-            for (int x = 0; x < _gridArray.GetLength(0); x++)
-            {
-                for (int y = 0; y < _gridArray.GetLength(1); y++)
-                { 
-                    _debugTextArray[x,y] = CreateText(_gridArray[x,y]?.ToString(), GetWorldPosition(x,y) + new Vector3(cellSize,cellSize) * 0.5f);
-                    //Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
-                    //Debug.DrawLine(GetWorldPosition(x,y), GetWorldPosition(x,y+1), Color.white, 100f);
-                }
-            }
-            //Debug.DrawLine(GetWorldPosition(0,height), GetWorldPosition(width,height), Color.white, 100f);
-            //Debug.DrawLine(GetWorldPosition(width,0), GetWorldPosition(width,height), Color.white, 100f);
         }
     }
 
@@ -78,18 +57,22 @@ public class GridMap<TGridObject>
         y = Mathf.FloorToInt((worldPosition-_originPosition).y / _cellSize);
     }
 
+/*
     private void SetGridObject(int x, int y, TGridObject gridObject)
     {
         if (x < 0 || y < 0 || x >= _width || y >= _height) return;
         _gridArray[x, y] = gridObject;
         _debugTextArray[x, y].text = _gridArray[x, y]?.ToString();
     }
+*/
 
+/*
     public void SetGridObject(Vector3 worldPosition, TGridObject gridObject)
     {
         GetXY(worldPosition, out int x, out int y);
         SetGridObject(x,y,gridObject);
     }
+*/
 
     public TGridObject GetGridObject(int x, int y)
     {
@@ -97,11 +80,13 @@ public class GridMap<TGridObject>
         return _gridArray[x, y];
     }
     
+/*
     public TGridObject GetGridObject(Vector3 worldPosition)
     {
         GetXY(worldPosition, out int x, out int y);
         return GetGridObject(x,y);
     }
+*/
 
     public static Vector3 GetMousePosition()
     {

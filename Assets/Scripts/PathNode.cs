@@ -8,6 +8,7 @@ public class PathNode
     // G - Start -> Current
     // H - Current -> End
     // F = G+H
+    
     public bool IsWalkable { get; private set; }
     public PathNode CameFromNode;
     
